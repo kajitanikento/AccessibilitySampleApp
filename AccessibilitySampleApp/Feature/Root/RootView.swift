@@ -11,6 +11,13 @@ struct RootView: View {
             .tabItem {
                 Label("タスク", systemImage: "checklist")
             }
+            
+            NavigationStack {
+                ImplementationSamplesView()
+            }
+            .tabItem {
+                Label("実装サンプル", systemImage: "list.bullet.clipboard")
+            }
 
             NavigationStack {
                 WCAGDemoView()
