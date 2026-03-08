@@ -413,7 +413,7 @@ struct AddTaskSheet: View {
                     Text("優先度")
                 }
             }
-            .navigationTitle("タスク追加")
+            .navigationTitle("タスクを追加")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

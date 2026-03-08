@@ -1,6 +1,6 @@
 ---
 paths:
-  - "AccessibilitySampleApp/**"
+  - "AccessibilitySampleApp/**/*View.swift"
 ---
 
 # SwiftUI アクセシビリティ実装ガイド

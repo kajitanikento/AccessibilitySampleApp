@@ -9,33 +9,90 @@ import XCTest
 
 final class AccessibilitySampleAppUITests: XCTestCase {
 
+    private var app: XCUIApplication!
+
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
+        app.launch()
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        app = nil
     }
 
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
+    // MARK: - タスク一覧画面
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    /// 起動直後にタスクタブが表示されている
+    @MainActor
+    func testTaskTabIsDisplayedOnLaunch() {
+        _ = app.taskListScreen()
     }
 
+    /// 初期タスクが一覧に表示されている
     @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    func testInitialTasksAreVisible() {
+        let taskList = app.taskListScreen()
+        XCTAssertTrue(app.staticTexts["牛乳を買う"].exists)
+        XCTAssertTrue(app.staticTexts["メール返信"].exists)
+        XCTAssertTrue(app.staticTexts["企画書作成"].exists)
+        taskList.verify()
+    }
+
+    // MARK: - タスク詳細への遷移
+
+    /// タスク行をタップするとタスク詳細画面に遷移する
+    @MainActor
+    func testTapTaskRowNavigatesToDetail() {
+        app.taskListScreen()
+            .tap(task: "牛乳を買う")
+            .verify()
+    }
+
+    /// タスク詳細画面から戻るボタンでタスク一覧に戻る
+    @MainActor
+    func testBackButtonReturnsToTaskList() {
+        app.taskListScreen()
+            .tap(task: "牛乳を買う")
+            .tapBack()
+            .verify()
+    }
+
+    // MARK: - タスク追加シート
+
+    /// 追加ボタンをタップするとタスク追加シートが表示される
+    @MainActor
+    func testAddButtonPresentsAddTaskSheet() {
+        app.taskListScreen()
+            .tapAddButton()
+            .verify()
+    }
+
+    /// タスク追加シートのキャンセルボタンでシートが閉じる
+    @MainActor
+    func testCancelDismissesAddTaskSheet() {
+        app.taskListScreen()
+            .tapAddButton()
+            .tapCancel()
+            .verify()
+    }
+
+    // MARK: - フィルターシート
+
+    /// フィルターボタンをタップするとフィルター選択シートが表示される
+    @MainActor
+    func testFilterButtonPresentsFilterSheet() {
+        app.taskListScreen()
+            .tapFilterButton()
+            .verify()
+    }
+
+    /// フィルターシートの閉じるボタンでシートが閉じる
+    @MainActor
+    func testCloseDismissesFilterSheet() {
+        app.taskListScreen()
+            .tapFilterButton()
+            .tapClose()
+            .verify()
     }
 }
