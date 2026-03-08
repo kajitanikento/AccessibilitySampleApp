@@ -1,6 +1,17 @@
 ---
 paths:
   - "AccessibilitySampleApp/**/*View.swift"
+  - "AccessibilitySampleApp/**/*Sheet.swift"
+  - "AccessibilitySampleApp/**/*Button.swift"
+  - "AccessibilitySampleApp/**/*Row.swift"
+  - "AccessibilitySampleApp/**/*Cell.swift"
+  - "AccessibilitySampleApp/**/*Card.swift"
+  - "AccessibilitySampleApp/**/*Modal.swift"
+  - "AccessibilitySampleApp/**/*Field.swift"
+  - "AccessibilitySampleApp/**/*Bar.swift"
+  - "AccessibilitySampleApp/**/*Badge.swift"
+  - "AccessibilitySampleApp/**/*Item.swift"
+  - "AccessibilitySampleApp/**/*Picker.swift"
 ---
 
 # SwiftUI アクセシビリティ実装ガイド
@@ -18,9 +29,13 @@ WCAG 基準の定義・一覧は `.claude/rules/wcag.md` を参照。
 - [ ] 全インタラクティブ要素に `accessibilityLabel` または意味のある表示テキスト（4.1.2）
 - [ ] 装飾画像に `.accessibilityHidden(true)`（1.1.1）
 - [ ] `Button` を使用し `onTapGesture` は使用しない（2.1.1）
-- [ ] Dynamic Type 対応（`DesignTokens.Font.*` を使用）（1.4.4）
+- [ ] Dynamic Type 対応: `DesignTokens.Font.*` または `Font.custom(_:size:relativeTo:)` を使用（1.4.4）
+- [ ] テキストを含むコンテナに固定高さ `.frame(height:)` を使わない（1.4.4）
 - [ ] フォーカスされた要素がスティッキー UI に隠れない（2.4.11）
 - [ ] ドラッグ操作に代替ボタンを提供（2.5.7）
+- [ ] エラーテキストには `dangerText` を使用（`danger` は 4.45:1 で基準未達の場合あり）（1.4.3）
+- [ ] アクセントカラーをバッジ背景にする場合、テキストは `textPrimary` を使用（1.4.3）
+- [ ] システムボタンスタイル（`.bordered` 等）に `foregroundStyle` でカスタム色を上書きしない（1.4.3）
 
 ---
 
@@ -154,19 +169,86 @@ SomeView()
 | `textSecondary` (#616161) / white | 5.9:1 | OK |
 | `primary` (#0017C1) / white | 8.6:1 | OK |
 | `textDisabled` (#9E9E9E) / white | 2.8:1 | 装飾用途のみ |
+| `danger` (#D32F2F) / `dangerSurface` (#FFEBEE) | 4.45:1 | **NG** ← テキストに使用禁止 |
+| `dangerText` (#B71C1C) / `dangerSurface` (#FFEBEE) | 5.8:1 | OK |
 
 フォーカスリング・アイコン・ボーダーは背景に対して 3:1 以上が必要（1.4.11）。
+
+### danger / dangerText の使い分け
+
+```swift
+// NG: danger は dangerSurface 背景では 4.45:1 — 基準（4.5:1）未達
+Text("エラー").foregroundStyle(DesignTokens.Color.danger)
+
+// OK: dangerText を使う（5.8:1）
+Text("エラー").foregroundStyle(DesignTokens.Color.dangerText)
+
+// OK: アイコンには danger を使ってよい（装飾・accessibilityHidden のため）
+Image(systemName: "exclamationmark.circle.fill")
+    .foregroundStyle(DesignTokens.Color.danger)
+    .accessibilityHidden(true)
+```
+
+### アクセントカラーをバッジ背景に使う場合
+
+`accent.opacity(0.15)` を背景にして `accent` を前景にすると、緑・紫・橙など明るい色では 3.5:1 以下になる。
+前景は必ず `textPrimary` を使う。
+
+```swift
+// NG: accent on accent.opacity(0.15) — 緑/紫/橙で 3.5:1 以下
+Text(label)
+    .background(accentColor.opacity(0.15))
+    .foregroundStyle(accentColor)
+
+// OK: textPrimary を使えばどのアクセントでも 14:1 以上を確保
+Text(label)
+    .background(accentColor.opacity(0.15))
+    .foregroundStyle(DesignTokens.Color.textPrimary)
+```
+
+### システムボタンのカラー上書き禁止
+
+`.buttonStyle(.bordered)` など iOS システムボタンは内部で tint カラーと背景色のコントラストを計算する。
+`foregroundStyle` でカスタム色を上書きするとコントラストが壊れる。
+
+```swift
+// NG: textSecondary を上書き → iOS 26 Liquid Glass 背景との組み合わせで基準未達の可能性
+Button("送信") { submit() }
+    .buttonStyle(.bordered)
+    .foregroundStyle(DesignTokens.Color.textSecondary)
+
+// OK: システムに任せる（tint カラーが適用される）
+Button("送信") { submit() }
+    .buttonStyle(.bordered)
+```
 
 ---
 
 ## Dynamic Type（1.4.4）
 
 ```swift
-// NG
+// NG: 固定サイズフォント（Dynamic Type 非対応）
 Text("本文").font(.system(size: 16))
 
-// OK: DesignTokens.Font は Dynamic Type スケーリング済み
+// OK: DesignTokens.Font は Font.custom(_:size:relativeTo:) で Dynamic Type スケーリング済み
 Text("本文").font(DesignTokens.Font.body)
+
+// カスタムフォントを手動定義する場合: Font.custom(_:size:relativeTo:) を使う
+// - NotoSansJP など未バンドルフォントでも relativeTo により Dynamic Type に追従する
+// - Font.system(size:) へのフォールバックと異なり、スケーリングが維持される
+Font.custom("NotoSansJP-Bold", size: 16, relativeTo: .body)
+
+// NG: Image に固定サイズフォントを適用（装飾要素でも Dynamic Type 違反になる）
+Image(systemName: "circle.fill").font(.system(size: 5))
+
+// OK: 固定サイズが必要な装飾図形は Shape を使う
+Circle().fill(color).frame(width: 5, height: 5).accessibilityHidden(true)
+
+// NG: テキストを含むコンテナに固定高さを設定（テキストが切れる）
+SomeView().frame(height: 36)
+
+// OK: minHeight を使って最低限の高さを保ちつつ伸縮を許容する
+SomeView().padding(.vertical, DesignTokens.Spacing.sm).frame(minHeight: 36)
 
 // レイアウトは縦方向に伸縮させ、横スクロールを強制しない
 Text("長いテキスト")

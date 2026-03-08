@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 enum TaskFilter: String, CaseIterable, Identifiable {
     case all, active, completed
@@ -52,7 +51,8 @@ struct TaskListView: View {
                         Spacer()
                     }
                     .padding(.horizontal, DesignTokens.Spacing.md)
-                    .frame(height: 36)
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                    .frame(minHeight: 36)
                     .background(DesignTokens.Color.surface)
                     .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
                     .overlay(
@@ -69,11 +69,9 @@ struct TaskListView: View {
                     Button("読み込みテスト") { simulateLoading() }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
-                        .foregroundStyle(DesignTokens.Color.textSecondary)
                     Button("エラーテスト") { simulateError() }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
-                        .foregroundStyle(DesignTokens.Color.textSecondary)
                 }
                 .padding(.horizontal, DesignTokens.Spacing.base)
                 
@@ -103,10 +101,10 @@ struct TaskListView: View {
                         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                             Text("エラー")
                                 .font(DesignTokens.Font.bodySmallBold)
-                                .foregroundStyle(DesignTokens.Color.danger)
+                                .foregroundStyle(DesignTokens.Color.dangerText)
                             Text(error)
                                 .font(DesignTokens.Font.bodySmall)
-                                .foregroundStyle(DesignTokens.Color.danger)
+                                .foregroundStyle(DesignTokens.Color.dangerText)
                             Button("再試行") {
                                 errorMessage = nil
                                 simulateLoading()
@@ -175,8 +173,8 @@ struct TaskListView: View {
         .background(DesignTokens.Color.background)
         // タスク追加 Sheet
         .sheet(isPresented: $isAddSheetOpen) {
-            AddTaskSheet(isPresented: $isAddSheetOpen) { title, priority in
-                store.add(title: title, priority: priority)
+            AddTaskSheet(isPresented: $isAddSheetOpen) { title, priority, description in
+                store.add(title: title, priority: priority, description: description)
                 announce("タスク「\(title)」を追加しました")
             }
         }
@@ -358,92 +356,6 @@ private struct SquareCheckbox: View {
             }
         }
         .accessibilityHidden(true)
-    }
-}
-
-// MARK: - AddTaskSheet
-
-struct AddTaskSheet: View {
-    @Binding var isPresented: Bool
-    let onSave: (String, Priority) -> Void
-
-    @State private var title = ""
-    @State private var priority: Priority = .medium
-    @State private var titleError: String? = nil
-    @FocusState private var isTitleFocused: Bool
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                        HStack {
-                            Text("タスク名")
-                                .font(DesignTokens.Font.bodySmallBold)
-                            Text("必須")
-                                .font(DesignTokens.Font.caption)
-                                .foregroundStyle(DesignTokens.Color.danger)
-                                .accessibilityLabel("必須項目")
-                        }
-                        TextField("例: 牛乳を買う", text: $title)
-                            .focused($isTitleFocused)
-                            .accessibilityLabel("タスク名（必須）")
-                            .accessibilityHint("タスクの名前を入力してください")
-                            .onChange(of: title) { _, _ in titleError = nil }
-                        if let error = titleError {
-                            Label(error, systemImage: "exclamationmark.circle")
-                                .font(DesignTokens.Font.caption)
-                                .foregroundStyle(DesignTokens.Color.danger)
-                                .accessibilityLabel("エラー: \(error)")
-                        }
-                    }
-                } header: {
-                    Text("タスク情報")
-                }
-
-                Section {
-                    Picker("優先度", selection: $priority) {
-                        ForEach(Priority.allCases) { p in
-                            Text(p.label).tag(p)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .accessibilityLabel("優先度を選択")
-                } header: {
-                    Text("優先度")
-                }
-            }
-            .navigationTitle("タスクを追加")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("キャンセル") {
-                        isPresented = false
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
-                        save()
-                    }
-                    .accessibilityLabel("タスクを保存")
-                }
-            }
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                isTitleFocused = true
-            }
-        }
-    }
-
-    private func save() {
-        guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            titleError = "タスク名を入力してください"
-            UIAccessibility.post(notification: .announcement, argument: "エラー: タスク名を入力してください")
-            return
-        }
-        onSave(title.trimmingCharacters(in: .whitespaces), priority)
-        isPresented = false
     }
 }
 

@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 // MARK: - WCAGCriterion
 
@@ -209,7 +208,7 @@ private struct WCAGItemRow: View {
                                 .padding(.horizontal, DesignTokens.Spacing.xs)
                                 .padding(.vertical, 3)
                                 .background(accent.opacity(0.15))
-                                .foregroundStyle(accent)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
                                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
                                 .accessibilityLabel("適合レベル \(level)")
                             Image(systemName: "chevron.right")
@@ -267,7 +266,7 @@ private struct WCAGItemDetailView: View {
                             .padding(.horizontal, DesignTokens.Spacing.xs)
                             .padding(.vertical, 3)
                             .background(accent.opacity(0.15))
-                            .foregroundStyle(accent)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
                             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
                             .accessibilityLabel("適合レベル \(level)")
                         Spacer()

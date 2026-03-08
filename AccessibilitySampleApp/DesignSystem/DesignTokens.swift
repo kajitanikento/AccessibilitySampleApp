@@ -75,11 +75,10 @@ enum DesignTokens {
 
         private static func scaledFont(size: CGFloat, weight: UIFont.Weight) -> SwiftUI.Font {
             let fontName = weight == .bold ? "NotoSansJP-Bold" : "NotoSansJP-Regular"
-            if let uiFont = UIFont(name: fontName, size: size) {
-                return SwiftUI.Font(UIFontMetrics(forTextStyle: .body).scaledFont(for: uiFont))
-            }
-            let swiftWeight: SwiftUI.Font.Weight = weight == .bold ? .bold : .regular
-            return SwiftUI.Font.system(size: size, weight: swiftWeight, design: .default)
+            // Font.custom(_:size:relativeTo:) は Dynamic Type 対応:
+            // NotoSansJP が利用不可の場合はシステムフォントにフォールバックしつつ、
+            // relativeTo で指定したテキストスタイルに連動してスケールする。
+            return SwiftUI.Font.custom(fontName, size: size, relativeTo: .body)
         }
     }
 

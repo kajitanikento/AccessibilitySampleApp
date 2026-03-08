@@ -64,27 +64,6 @@ struct TaskDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
                 .padding(.horizontal, DesignTokens.Spacing.base)
                 .padding(.top, DesignTokens.Spacing.base)
-
-                // アクセシビリティ説明セクション
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                    Text("この画面で確認できること")
-                        .font(DesignTokens.Font.bodySmallBold)
-                        .foregroundStyle(DesignTokens.Color.primary)
-                        .accessibilityAddTraits(.isHeader)
-
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                        InfoRow(text: "Push遷移による階層ナビゲーション")
-                        InfoRow(text: "戻るボタンのアクセシビリティラベル")
-                        InfoRow(text: "画面タイトルの適切な設定（navigationTitle）")
-                        InfoRow(text: "フォーカス順序の自然な流れ")
-                    }
-                }
-                .padding(DesignTokens.Spacing.base)
-                .background(DesignTokens.Color.primaryLight)
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-                .padding(.horizontal, DesignTokens.Spacing.base)
-                .padding(.top, DesignTokens.Spacing.md)
-                .padding(.bottom, DesignTokens.Spacing.base)
             }
         }
         .navigationTitle("タスク詳細")
@@ -98,9 +77,9 @@ private struct InfoRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: DesignTokens.Spacing.xs) {
-            Image(systemName: "circle.fill")
-                .font(.system(size: 5))
-                .foregroundStyle(DesignTokens.Color.primary)
+            Circle()
+                .fill(DesignTokens.Color.primary)
+                .frame(width: 5, height: 5)
                 .padding(.top, 6)
                 .accessibilityHidden(true)
             Text(text)
