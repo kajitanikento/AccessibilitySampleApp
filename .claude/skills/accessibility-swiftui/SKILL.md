@@ -1,17 +1,6 @@
 ---
-paths:
-  - "AccessibilitySampleApp/**/*View.swift"
-  - "AccessibilitySampleApp/**/*Sheet.swift"
-  - "AccessibilitySampleApp/**/*Button.swift"
-  - "AccessibilitySampleApp/**/*Row.swift"
-  - "AccessibilitySampleApp/**/*Cell.swift"
-  - "AccessibilitySampleApp/**/*Card.swift"
-  - "AccessibilitySampleApp/**/*Modal.swift"
-  - "AccessibilitySampleApp/**/*Field.swift"
-  - "AccessibilitySampleApp/**/*Bar.swift"
-  - "AccessibilitySampleApp/**/*Badge.swift"
-  - "AccessibilitySampleApp/**/*Item.swift"
-  - "AccessibilitySampleApp/**/*Picker.swift"
+name: accessibility-swiftui
+description: SwiftUI UIコンポーネントのアクセシビリティ実装ガイド。View・Sheet・Button・Row・Card等のUIコンポーネントを新規作成または更新するときに使用する。WCAG 2.2 A/AA準拠の実装パターン集。
 ---
 
 # SwiftUI アクセシビリティ実装ガイド
@@ -23,19 +12,19 @@ WCAG 基準の定義・一覧は `.claude/rules/wcag.md` を参照。
 
 ## 必須チェックリスト
 
-- [ ] タップターゲット 44×44pt 以上（推奨）/ 最低 24×24pt（2.5.8）
-- [ ] テキストコントラスト比 4.5:1 以上（1.4.3）
-- [ ] 非テキスト要素コントラスト比 3:1 以上（1.4.11）
-- [ ] 全インタラクティブ要素に `accessibilityLabel` または意味のある表示テキスト（4.1.2）
-- [ ] 装飾画像に `.accessibilityHidden(true)`（1.1.1）
-- [ ] `Button` を使用し `onTapGesture` は使用しない（2.1.1）
-- [ ] Dynamic Type 対応: `DesignTokens.Font.*` または `Font.custom(_:size:relativeTo:)` を使用（1.4.4）
-- [ ] テキストを含むコンテナに固定高さ `.frame(height:)` を使わない（1.4.4）
-- [ ] フォーカスされた要素がスティッキー UI に隠れない（2.4.11）
-- [ ] ドラッグ操作に代替ボタンを提供（2.5.7）
-- [ ] エラーテキストには `dangerText` を使用（`danger` は 4.45:1 で基準未達の場合あり）（1.4.3）
-- [ ] アクセントカラーをバッジ背景にする場合、テキストは `textPrimary` を使用（1.4.3）
-- [ ] システムボタンスタイル（`.bordered` 等）に `foregroundStyle` でカスタム色を上書きしない（1.4.3）
+- タップターゲット 44×44pt 以上（推奨）/ 最低 24×24pt（2.5.8）
+- テキストコントラスト比 4.5:1 以上（1.4.3）
+- 非テキスト要素コントラスト比 3:1 以上（1.4.11）
+- 全インタラクティブ要素に `accessibilityLabel` または意味のある表示テキスト（4.1.2）
+- 装飾画像に `.accessibilityHidden(true)`（1.1.1）
+- `Button` を使用し `onTapGesture` は使用しない（2.1.1）
+- Dynamic Type 対応: `DesignTokens.Font.*` または `Font.custom(_:size:relativeTo:)` を使用（1.4.4）
+- テキストを含むコンテナに固定高さ `.frame(height:)` を使わない（1.4.4）
+- フォーカスされた要素がスティッキー UI に隠れない（2.4.11）
+- ドラッグ操作に代替ボタンを提供（2.5.7）
+- エラーテキストには `dangerText` を使用（`danger` は 4.45:1 で基準未達の場合あり）（1.4.3）
+- アクセントカラーをバッジ背景にする場合、テキストは `textPrimary` を使用（1.4.3）
+- システムボタンスタイル（`.bordered` 等）に `foregroundStyle` でカスタム色を上書きしない（1.4.3）
 
 ---
 
@@ -362,19 +351,3 @@ TextField("メール", text: $email)
 ```
 
 ---
-
-## テスト手順
-
-### VoiceOver（最低限の確認）
-1. 設定 > アクセシビリティ > VoiceOver をオン
-2. スワイプで全要素を順に確認（名前・役割・値・ヒントが正しいか）
-3. ダブルタップでアクションが実行されるか確認
-4. フォーカス順序が論理的か確認
-
-### Xcode Accessibility Inspector
-- Xcode > Open Developer Tool > Accessibility Inspector
-- Color Contrast Calculator でコントラスト比を確認
-
-### Dynamic Type
-- 設定 > アクセシビリティ > さらに大きな文字 を最大に設定
-- 全画面でテキストが読めレイアウトが崩れないことを確認

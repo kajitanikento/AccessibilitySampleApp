@@ -7,7 +7,6 @@ paths:
 
 参照: https://waic.jp/translations/WCAG22/
 対象レベル: **A / AA**
-SwiftUI 実装パターン: `.claude/rules/accessibility-swiftui.md` を参照
 
 ---
 
