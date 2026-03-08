@@ -1816,19 +1816,6 @@ private struct WCAGItemDetailView: View {
                 .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
                 .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
             }
-
-        default:
-            VStack(spacing: DesignTokens.Spacing.base) {
-                Image(systemName: "hammer")
-                    .font(.system(size: 32))
-                    .foregroundStyle(DesignTokens.Color.textDisabled)
-                    .accessibilityHidden(true)
-                Text("このデモは準備中です")
-                    .font(DesignTokens.Font.body)
-                    .foregroundStyle(DesignTokens.Color.textSecondary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, DesignTokens.Spacing.xxxl)
         }
     }
 }

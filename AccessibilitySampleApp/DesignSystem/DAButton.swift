@@ -123,7 +123,7 @@ private struct DAButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .onChange(of: configuration.isPressed) { _, newValue in
+            .onChange(of: configuration.isPressed) { newValue in
                 isPressed = newValue
             }
     }

@@ -29,7 +29,7 @@ struct AddTaskSheet: View {
                             .focused($isTitleFocused)
                             .accessibilityLabel("タスク名（必須）")
                             .accessibilityHint("タスクの名前を入力してください")
-                            .onChange(of: title) { _, _ in titleError = nil }
+                            .onChange(of: title) { _ in titleError = nil }
                         if let error = titleError {
                             Label(error, systemImage: "exclamationmark.circle")
                                 .font(DesignTokens.Font.caption)
