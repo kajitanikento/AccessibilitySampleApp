@@ -249,6 +249,9 @@ private struct WCAGItemDetailView: View {
     @State private var timerSeconds = 30
     @State private var isTimerRunning = false
     @State private var demoItems: [String] = ["タスク A", "タスク B", "タスク C"]
+    @State private var demoEmail = ""
+    @State private var demoName = ""
+    @State private var showNoTrapSheet = false
 
     var body: some View {
         ScrollView {
@@ -311,8 +314,49 @@ private struct WCAGItemDetailView: View {
         switch id {
         case .nonTextContent:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: "意味のある画像（良い例）") {
-                    HStack(spacing: DesignTokens.Spacing.md) {
+                // 意味のある画像: 悪い例 / 良い例
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    // 悪い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                                .accessibilityHidden(true)
+                            Text("悪い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                        }
+                        ZStack {
+                            RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                                .fill(DesignTokens.Color.danger)
+                                .frame(width: 48, height: 48)
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 20))
+                                .foregroundStyle(DesignTokens.Color.textOnPrimary)
+                            // accessibilityLabel なし
+                        }
+                        Text("代替テキストなし")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#fef2f2"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                    // 良い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                                .accessibilityHidden(true)
+                            Text("良い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                        }
                         ZStack {
                             RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
                                 .fill(DesignTokens.Color.danger)
@@ -321,21 +365,62 @@ private struct WCAGItemDetailView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(DesignTokens.Color.textOnPrimary)
                         }
-                        .accessibilityLabel("優先度が高いことを示す警告アイコン")
-
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                            Text("優先度: 高")
-                                .font(DesignTokens.Font.bodySmallBold)
-                                .foregroundStyle(DesignTokens.Color.textPrimary)
-                            Text("accessibilityLabel で代替テキストを提供")
-                                .font(DesignTokens.Font.caption)
-                                .foregroundStyle(DesignTokens.Color.textSecondary)
-                        }
+                        .accessibilityLabel("優先度: 高")
+                        Text("「優先度: 高」と読み上げ")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
                     }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#f0fdf4"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
                 }
 
-                FigmaDemoBox(label: "装飾画像（良い例）") {
-                    HStack(spacing: DesignTokens.Spacing.md) {
+                // 装飾画像: 悪い例 / 良い例
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    // 悪い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                                .accessibilityHidden(true)
+                            Text("悪い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                        }
+                        RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "#51a2ff"), Color(hex: "#ad46ff")],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 48, height: 48)
+                            // accessibilityHidden なし → 装飾なのに読み上げられる
+                        Text("装飾画像が読み上げられる")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#fef2f2"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                    // 良い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                                .accessibilityHidden(true)
+                            Text("良い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                        }
                         RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
                             .fill(
                                 LinearGradient(
@@ -346,11 +431,15 @@ private struct WCAGItemDetailView: View {
                             )
                             .frame(width: 48, height: 48)
                             .accessibilityHidden(true)
-
-                        Text("accessibilityHidden(true) で読み上げから除外")
+                        Text("読み上げから除外される")
                             .font(DesignTokens.Font.caption)
-                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
                     }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#f0fdf4"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
                 }
             }
 
@@ -378,7 +467,7 @@ private struct WCAGItemDetailView: View {
 
         case .useOfColor:
             // コントラスト比デモ: 教育目的のため特定色を維持
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 // 悪い例
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
@@ -503,43 +592,154 @@ private struct WCAGItemDetailView: View {
             }
 
         case .keyboard:
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                HStack(spacing: DesignTokens.Spacing.sm) {
-                    Text("ボタン1")
-                        .font(DesignTokens.Font.buttonSmall)
-                        .foregroundStyle(DesignTokens.Color.textOnPrimary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
-                        .background(DesignTokens.Color.textPrimary)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
-                        .accessibilityHint("Tabキーでフォーカス移動、Enterで実行")
-
-                    Text("ボタン2")
-                        .font(DesignTokens.Font.buttonSmall)
+            VStack(spacing: DesignTokens.Spacing.md) {
+                // 悪い例
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(Color(hex: "#82181a"))
+                            .accessibilityHidden(true)
+                        Text("悪い例")
+                            .font(DesignTokens.Font.captionBold)
+                            .foregroundStyle(Color(hex: "#82181a"))
+                    }
+                    Text("タップ")
+                        .font(DesignTokens.Font.bodySmall)
                         .foregroundStyle(DesignTokens.Color.textPrimary)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 36)
+                        .frame(height: 44)
                         .background(DesignTokens.Color.surface)
                         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
                         .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(DesignTokens.Color.border, lineWidth: 1))
+                        .onTapGesture { }
+                        // VoiceOver・Switch Controlで操作不可
+                    Text("Switch Controlで操作不可")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
                 }
-                Text("Tabキーでフォーカス移動、Enterで実行")
-                    .font(DesignTokens.Font.caption)
-                    .foregroundStyle(DesignTokens.Color.textSecondary)
+                .padding(DesignTokens.Spacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(hex: "#fef2f2"))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                // 良い例
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(Color(hex: "#0d542b"))
+                            .accessibilityHidden(true)
+                        Text("良い例")
+                            .font(DesignTokens.Font.captionBold)
+                            .foregroundStyle(Color(hex: "#0d542b"))
+                    }
+                    Button("タップ") { }
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(DesignTokens.Color.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+                        .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(DesignTokens.Color.border, lineWidth: 1))
+                        .buttonStyle(.plain)
+                    Text("Switch Controlで操作可能")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                }
+                .padding(DesignTokens.Spacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(hex: "#f0fdf4"))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
             }
 
         case .pageTitled:
-            FigmaDemoBox(label: "この画面のタイトル設定") {
-                Text(".navigationTitle(\"WCAGデモ\")")
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundStyle(DesignTokens.Color.textSecondary)
+            FigmaDemoBox(label: "この画面のナビゲーションタイトル") {
+                HStack(spacing: DesignTokens.Spacing.md) {
+                    Image(systemName: "chevron.left")
+                        .font(DesignTokens.Font.bodyBold)
+                        .foregroundStyle(DesignTokens.Color.primary)
+                        .accessibilityHidden(true)
+                    Text("2.4.2 ページタイトル")
+                        .font(DesignTokens.Font.bodyBold)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .frame(maxWidth: .infinity)
+                    Spacer()
+                }
+                .padding(.vertical, DesignTokens.Spacing.sm)
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .background(DesignTokens.Color.surface)
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm).stroke(DesignTokens.Color.border, lineWidth: 1))
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("ナビゲーションバーにページタイトルが表示されている")
             }
 
         case .focusOrder:
-            FigmaDemoBox(label: nil) {
-                Text("タスク画面でのPush遷移で確認可能")
-                    .font(DesignTokens.Font.bodySmall)
-                    .foregroundStyle(DesignTokens.Color.textPrimary)
+            VStack(spacing: DesignTokens.Spacing.md) {
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    // 悪い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                                .accessibilityHidden(true)
+                            Text("悪い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                        }
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("説明テキスト")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textSecondary)
+                                .accessibilitySortPriority(0)
+                            Text("タイトル")
+                                .font(DesignTokens.Font.bodyBold)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                                .accessibilitySortPriority(1)
+                        }
+                        Text("読み上げ順が視覚と不一致")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#fef2f2"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                    // 良い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                                .accessibilityHidden(true)
+                            Text("良い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                        }
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("タイトル")
+                                .font(DesignTokens.Font.bodyBold)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            Text("説明テキスト")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textSecondary)
+                        }
+                        Text("読み上げ順が視覚と一致")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#f0fdf4"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+                }
             }
 
         case .draggingMovements:
@@ -605,7 +805,7 @@ private struct WCAGItemDetailView: View {
                     Text("タスク名を入力してください")
                         .font(DesignTokens.Font.bodySmallBold)
                         .foregroundStyle(DesignTokens.Color.dangerText)
-                    Text("accessibilityLabel と role: .alert で通知")
+                    Text("エラーはアイコン・色・テキストで明示し、VoiceOverが読み上げます")
                         .font(DesignTokens.Font.caption)
                         .foregroundStyle(DesignTokens.Color.danger)
                 }
@@ -615,6 +815,8 @@ private struct WCAGItemDetailView: View {
             .background(DesignTokens.Color.dangerSurface)
             .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(DesignTokens.Color.danger.opacity(0.4), lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("エラー: タスク名を入力してください")
 
         case .errorSuggestion:
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
@@ -638,14 +840,58 @@ private struct WCAGItemDetailView: View {
 
         case .nameRoleValue:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaCodeBox(label: "accessibilityLabel（ラベル）",
-                             code: ".accessibilityLabel(\"タスク「牛乳を買う」を削除\")")
-                FigmaCodeBox(label: "accessibilityValue（値）",
-                             code: ".accessibilityValue(\"完了\")")
-                FigmaCodeBox(label: "accessibilityHint（ヒント）",
-                             code: ".accessibilityHint(\"ダブルタップで削除します\")")
-                FigmaCodeBox(label: "accessibilityAddTraits（役割）",
-                             code: ".accessibilityAddTraits(.isHeader)")
+                // accessibilityLabel のデモ
+                FigmaDemoBox(label: "名前（Label）") {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Button { } label: {
+                            Image(systemName: "trash")
+                                .font(.system(size: 18))
+                                .foregroundStyle(DesignTokens.Color.danger)
+                                .frame(width: 44, height: 44)
+                                .background(DesignTokens.Color.dangerSurface)
+                                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("タスク「牛乳を買う」を削除")
+                        .accessibilityHint("ダブルタップで削除します")
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("「タスク「牛乳を買う」を削除」と読み上げ")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            Text("ヒント: 「ダブルタップで削除します」")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textSecondary)
+                        }
+                    }
+                }
+
+                // accessibilityValue のデモ
+                FigmaDemoBox(label: "値（Value）") {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Toggle("", isOn: .constant(true))
+                            .labelsHidden()
+                            .accessibilityLabel("プッシュ通知")
+                            .accessibilityValue("オン")
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("「プッシュ通知、オン」と読み上げ")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                        }
+                    }
+                }
+
+                // accessibilityAddTraits のデモ
+                FigmaDemoBox(label: "役割（Traits）") {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        Text("タスク一覧")
+                            .font(DesignTokens.Font.bodyBold)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("「見出し、タスク一覧」と読み上げ")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                }
             }
 
         // MARK: - 1.2.x メディア代替手段
@@ -758,16 +1004,134 @@ private struct WCAGItemDetailView: View {
 
         case .infoAndRelationships:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaCodeBox(label: "見出しとして識別する",
-                             code: "Text(\"セクション名\")\n    .font(DesignTokens.Font.heading4)\n    .accessibilityAddTraits(.isHeader)")
-                FigmaCodeBox(label: "関連要素をグループ化する",
-                             code: "HStack { icon; title; date }\n    .accessibilityElement(children: .combine)\n    .accessibilityLabel(\"タスク名、期限 5月1日\")")
-                FigmaCodeBox(label: "入力とラベルを関連づける",
-                             code: "TextField(\"例: 牛乳を買う\", text: $title)\n    .accessibilityLabel(\"タスク名\")")
+                // セクション1: 見出し構造
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    // 悪い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                                .accessibilityHidden(true)
+                            Text("悪い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                        }
+                        Text("タスク一覧")
+                            .font(DesignTokens.Font.bodyBold)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                            // .isHeader なし → VoiceOverが見出しとして認識しない
+                        Text("テキストとして読み上げ")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#fef2f2"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                    // 良い例
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                                .accessibilityHidden(true)
+                            Text("良い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                        }
+                        Text("タスク一覧")
+                            .font(DesignTokens.Font.bodyBold)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("見出しとして読み上げ")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#f0fdf4"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+                }
+
+                // セクション2: グループ化
+                VStack(spacing: DesignTokens.Spacing.md) {
+                    // 悪い例: バラバラな要素（個別読み上げ）
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                                .accessibilityHidden(true)
+                            Text("悪い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#82181a"))
+                        }
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .accessibilityHidden(true)
+                                .font(.system(size: 12))
+                                .foregroundStyle(DesignTokens.Color.danger)
+                            Text("牛乳を買う")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            Text("5月1日")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textSecondary)
+                        }
+                        // 個別に3回読み上げられる
+                        Text("要素が個別に読み上げられる")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#fef2f2"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                    // 良い例: グループ化
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                                .accessibilityHidden(true)
+                            Text("良い例")
+                                .font(DesignTokens.Font.captionBold)
+                                .foregroundStyle(Color(hex: "#0d542b"))
+                        }
+                        HStack(spacing: DesignTokens.Spacing.xs) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .accessibilityHidden(true)
+                                .font(.system(size: 12))
+                                .foregroundStyle(DesignTokens.Color.danger)
+                            Text("牛乳を買う")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            Text("5月1日")
+                                .font(DesignTokens.Font.caption)
+                                .foregroundStyle(DesignTokens.Color.textSecondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("牛乳を買う、期限 5月1日")
+                        Text("1回でまとめて読み上げ")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                    .padding(DesignTokens.Spacing.md)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(hex: "#f0fdf4"))
+                    .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+                }
             }
 
         case .sensoryCharacteristics:
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -810,56 +1174,72 @@ private struct WCAGItemDetailView: View {
             }
 
         case .orientation:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: nil) {
-                    HStack(spacing: DesignTokens.Spacing.md) {
-                        HStack(spacing: DesignTokens.Spacing.sm) {
-                            Image(systemName: "rectangle.portrait")
-                                .font(.system(size: 28))
-                                .foregroundStyle(DesignTokens.Color.primary)
-                                .accessibilityHidden(true)
-                            Image(systemName: "rectangle.landscape")
-                                .font(.system(size: 28))
-                                .foregroundStyle(DesignTokens.Color.primary)
-                                .accessibilityHidden(true)
-                        }
-                        Text("縦・横どちらの向きでも動作する")
-                            .font(DesignTokens.Font.bodySmall)
-                            .foregroundStyle(DesignTokens.Color.textPrimary)
+            FigmaDemoBox(label: nil) {
+                HStack(spacing: DesignTokens.Spacing.md) {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
+                        Image(systemName: "rectangle.portrait")
+                            .font(.system(size: 28))
+                            .foregroundStyle(DesignTokens.Color.primary)
+                            .accessibilityHidden(true)
+                        Image(systemName: "rectangle.landscape")
+                            .font(.system(size: 28))
+                            .foregroundStyle(DesignTokens.Color.primary)
+                            .accessibilityHidden(true)
                     }
+                    Text("縦・横どちらの向きでも動作する")
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
                 }
-                FigmaCodeBox(label: "向きを固定しない（Info.plist）",
-                             code: "// Supported Interface Orientations に\n// Portrait と Landscape 両方を登録する\n// SwiftUI はデフォルトで制限なし")
             }
 
         case .identifyInputPurpose:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaCodeBox(label: "メールアドレス",
-                             code: "TextField(\"例: user@example.com\",\n          text: $email)\n    .textContentType(.emailAddress)\n    .keyboardType(.emailAddress)")
-                FigmaCodeBox(label: "氏名",
-                             code: "TextField(\"例: 山田 太郎\", text: $name)\n    .textContentType(.name)")
-                FigmaCodeBox(label: "パスワード",
-                             code: "SecureField(\"パスワード\", text: $password)\n    .textContentType(.password)")
+                FigmaDemoBox(label: "キーボードが自動的に最適化される") {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("メールアドレス")
+                                .font(DesignTokens.Font.bodySmallBold)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            TextField("例: user@example.com", text: $demoEmail)
+                                .textContentType(.emailAddress)
+                                .keyboardType(.emailAddress)
+                                .autocapitalization(.none)
+                                .padding(DesignTokens.Spacing.sm)
+                                .background(DesignTokens.Color.background)
+                                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
+                                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm).stroke(DesignTokens.Color.border, lineWidth: 1))
+                                .accessibilityLabel("メールアドレス")
+                        }
+                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                            Text("氏名")
+                                .font(DesignTokens.Font.bodySmallBold)
+                                .foregroundStyle(DesignTokens.Color.textPrimary)
+                            TextField("例: 山田 太郎", text: $demoName)
+                                .textContentType(.name)
+                                .padding(DesignTokens.Spacing.sm)
+                                .background(DesignTokens.Color.background)
+                                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm))
+                                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.sm).stroke(DesignTokens.Color.border, lineWidth: 1))
+                                .accessibilityLabel("氏名")
+                        }
+                    }
+                }
             }
 
         // MARK: - 1.4.x 判別可能
 
         case .reflow:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: nil) {
-                    Text("このアプリは ScrollView を使用しており、画面幅に応じてコンテンツが縦方向に再配置されます。横スクロールなしで 320pt 幅でも閲覧できます。")
-                        .font(DesignTokens.Font.bodySmall)
-                        .foregroundStyle(DesignTokens.Color.textPrimary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                FigmaCodeBox(label: "リフロー対応のレイアウト",
-                             code: "ScrollView {\n    VStack {\n        Text(content)\n            .frame(maxWidth: .infinity)\n            .fixedSize(horizontal: false,\n                       vertical: true)\n    }\n}")
+            FigmaDemoBox(label: nil) {
+                Text("このアプリは ScrollView を使用しており、画面幅に応じてコンテンツが縦方向に再配置されます。横スクロールなしで 320pt 幅でも閲覧できます。")
+                    .font(DesignTokens.Font.bodySmall)
+                    .foregroundStyle(DesignTokens.Color.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
         case .nonTextContrast:
             // 教育目的: 低コントラストと高コントラストのUIコンポーネントを比較
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -931,15 +1311,32 @@ private struct WCAGItemDetailView: View {
 
         case .noKeyboardTrap:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: nil) {
-                    Text("シートやアラートは常に閉じる手段を提供します。フォーカスが特定の要素に閉じ込められることはありません。")
-                        .font(DesignTokens.Font.bodySmall)
-                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                FigmaDemoBox(label: "シートは常に閉じる手段を提供する") {
+                    VStack(spacing: DesignTokens.Spacing.sm) {
+                        Text("シートやアラートは常に閉じる手段を提供します。フォーカスが特定の要素に閉じ込められることはありません。")
+                            .font(DesignTokens.Font.bodySmall)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                        DAButton("シートを開く", style: .outlined, size: .small) {
+                            showNoTrapSheet = true
+                        }
+                    }
                 }
-                FigmaCodeBox(label: "シートを閉じる",
-                             code: "@Environment(\\.dismiss) var dismiss\n\nButton(\"閉じる\") { dismiss() }")
-                FigmaCodeBox(label: "半モーダルはドラッグでも閉じられる",
-                             code: ".sheet(isPresented: $isPresented) {\n    Content()\n        .presentationDetents(\n            [.medium, .large])\n        .presentationDragIndicator(.visible)\n}")
+            }
+            .sheet(isPresented: $showNoTrapSheet) {
+                VStack(spacing: DesignTokens.Spacing.xl) {
+                    Text("このシートは閉じることができます")
+                        .font(DesignTokens.Font.bodyBold)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                    Text("ドラッグダウンまたはボタンで閉じられます")
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textSecondary)
+                    DAButton("閉じる", style: .solidFill, size: .medium) {
+                        showNoTrapSheet = false
+                    }
+                }
+                .padding(DesignTokens.Spacing.xl)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             }
 
         // MARK: - 2.2.x 十分な時間
@@ -995,18 +1392,28 @@ private struct WCAGItemDetailView: View {
         // MARK: - 2.4.x ナビゲーション可能
 
         case .bypassBlocks:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: nil) {
-                    Text("VoiceOver のローターで「見出し」を選択すると、見出し間をスワイプでジャンプできます。.isHeader trait を付与することが前提です。")
-                        .font(DesignTokens.Font.bodySmall)
+            FigmaDemoBox(label: "VoiceOverローターで見出しジャンプ") {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    Text("1. 知覚可能 (Perceivable)")
+                        .font(DesignTokens.Font.heading4)
                         .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                    Text("非テキストコンテンツ、音声・映像...")
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textSecondary)
+                    Text("2. 操作可能 (Operable)")
+                        .font(DesignTokens.Font.heading4)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                        .padding(.top, DesignTokens.Spacing.xs)
+                    Text("キーボード操作、ナビゲーション...")
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textSecondary)
                 }
-                FigmaCodeBox(label: "セクション見出しのマーク",
-                             code: "Text(\"1. 知覚可能 (Perceivable)\")\n    .font(DesignTokens.Font.heading4)\n    .accessibilityAddTraits(.isHeader)")
             }
 
         case .linkPurpose:
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -1059,26 +1466,22 @@ private struct WCAGItemDetailView: View {
             }
 
         case .headingsAndLabels:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: "見出し階層の例") {
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
-                        Text("アクセシビリティ設定")
-                            .font(DesignTokens.Font.heading4)
-                            .foregroundStyle(DesignTokens.Color.textPrimary)
-                            .accessibilityAddTraits(.isHeader)
-                        Text("VoiceOver")
-                            .font(DesignTokens.Font.bodyBold)
-                            .foregroundStyle(DesignTokens.Color.textPrimary)
-                            .accessibilityAddTraits(.isHeader)
-                            .padding(.leading, DesignTokens.Spacing.md)
-                        Text("読み上げ速度: 標準")
-                            .font(DesignTokens.Font.bodySmall)
-                            .foregroundStyle(DesignTokens.Color.textSecondary)
-                            .padding(.leading, DesignTokens.Spacing.xxl)
-                    }
+            FigmaDemoBox(label: "見出し階層の例") {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    Text("アクセシビリティ設定")
+                        .font(DesignTokens.Font.heading4)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                    Text("VoiceOver")
+                        .font(DesignTokens.Font.bodyBold)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                        .padding(.leading, DesignTokens.Spacing.md)
+                    Text("読み上げ速度: 標準")
+                        .font(DesignTokens.Font.bodySmall)
+                        .foregroundStyle(DesignTokens.Color.textSecondary)
+                        .padding(.leading, DesignTokens.Spacing.xxl)
                 }
-                FigmaCodeBox(label: "見出しのマーク",
-                             code: "Text(\"セクション名\")\n    .accessibilityAddTraits(.isHeader)")
             }
 
         // MARK: - 2.5.x 入力モダリティ
@@ -1126,7 +1529,7 @@ private struct WCAGItemDetailView: View {
             }
 
         case .pointerCancellation:
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -1169,7 +1572,7 @@ private struct WCAGItemDetailView: View {
             }
 
         case .labelInName:
-            HStack(spacing: DesignTokens.Spacing.md) {
+            VStack(spacing: DesignTokens.Spacing.md) {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -1193,8 +1596,8 @@ private struct WCAGItemDetailView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel("×")
                     }
-                    Text(".accessibilityLabel(\"×\")")
-                        .font(.system(size: 10, design: .monospaced))
+                    Text("「×」と読み上げ（目的不明）")
+                        .font(DesignTokens.Font.caption)
                         .foregroundStyle(DesignTokens.Color.textSecondary)
                 }
                 .padding(DesignTokens.Spacing.md)
@@ -1226,8 +1629,8 @@ private struct WCAGItemDetailView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel("削除")
                     }
-                    Text(".accessibilityLabel(\"削除\")")
-                        .font(.system(size: 10, design: .monospaced))
+                    Text("「削除」と読み上げ")
+                        .font(DesignTokens.Font.caption)
                         .foregroundStyle(DesignTokens.Color.textSecondary)
                 }
                 .padding(DesignTokens.Spacing.md)
@@ -1240,32 +1643,81 @@ private struct WCAGItemDetailView: View {
         // MARK: - 3.1.x 読み取り可能
 
         case .languageOfPage:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaCodeBox(label: "Info.plist で言語を宣言",
-                             code: "<!-- Info.plist -->\n<key>CFBundleDevelopmentRegion</key>\n<string>ja</string>")
-                FigmaCodeBox(label: "SwiftUI でロケールを明示（部分指定）",
-                             code: "Text(\"設定\")\n    .environment(\\.locale,\n        Locale(identifier: \"ja\"))")
+            FigmaDemoBox(label: "アプリの言語設定") {
+                HStack(spacing: DesignTokens.Spacing.md) {
+                    Image(systemName: "globe")
+                        .font(.system(size: 28))
+                        .foregroundStyle(DesignTokens.Color.primary)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                        Text("日本語 (Japanese)")
+                            .font(DesignTokens.Font.bodySmallBold)
+                            .foregroundStyle(DesignTokens.Color.textPrimary)
+                        Text("このアプリの言語はプログラム的に「日本語」と識別されます。VoiceOverが正しい言語で読み上げます。")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(DesignTokens.Color.textSecondary)
+                    }
+                }
             }
 
         // MARK: - 3.2.x 予測可能
 
         case .onFocus:
-            VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaDemoBox(label: nil) {
-                    Text("VoiceOver のスワイプでフォーカスを移動しても、自動的な画面遷移や予期しないダイアログが表示されてはいけません。")
-                        .font(DesignTokens.Font.bodySmall)
-                        .foregroundStyle(DesignTokens.Color.textPrimary)
-                }
-                FigmaCodeBox(label: "フォーカスだけで遷移しない（OK）",
-                             code: "@FocusState private var isFocused: Bool\n\nTextField(\"タスク名\", text: $title)\n    .focused($isFocused)\n// フォーカス変化だけで遷移しない")
+            FigmaDemoBox(label: nil) {
+                Text("VoiceOver のスワイプでフォーカスを移動しても、自動的な画面遷移や予期しないダイアログが表示されてはいけません。")
+                    .font(DesignTokens.Font.bodySmall)
+                    .foregroundStyle(DesignTokens.Color.textPrimary)
             }
 
         case .onInput:
             VStack(spacing: DesignTokens.Spacing.md) {
-                FigmaCodeBox(label: "入力・選択だけで自動遷移しない（OK）",
-                             code: "Picker(\"優先度\", selection: $priority) {\n    ...\n}\n// 選択後はボタン押下で確定する")
-                FigmaCodeBox(label: "NG パターン",
-                             code: "// 選択と同時に自動遷移してしまう例\n.onChange(of: selectedItem) { _ in\n    navigationPath.append(selectedItem)\n}")
+                // 悪い例
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(Color(hex: "#82181a"))
+                            .accessibilityHidden(true)
+                        Text("悪い例")
+                            .font(DesignTokens.Font.captionBold)
+                            .foregroundStyle(Color(hex: "#82181a"))
+                    }
+                    Text("優先度を選ぶと\n即画面遷移する")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                    Text("予期しない動作")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.danger)
+                }
+                .padding(DesignTokens.Spacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(hex: "#fef2f2"))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#ffc9c9"), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
+
+                // 良い例
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(DesignTokens.Font.caption)
+                            .foregroundStyle(Color(hex: "#0d542b"))
+                            .accessibilityHidden(true)
+                        Text("良い例")
+                            .font(DesignTokens.Font.captionBold)
+                            .foregroundStyle(Color(hex: "#0d542b"))
+                    }
+                    Text("優先度を選んで\nボタンで確定する")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.textPrimary)
+                    Text("ユーザーが制御")
+                        .font(DesignTokens.Font.caption)
+                        .foregroundStyle(DesignTokens.Color.success)
+                }
+                .padding(DesignTokens.Spacing.md)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(hex: "#f0fdf4"))
+                .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).stroke(Color(hex: "#b9f8cf"), lineWidth: 1))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
             }
 
         case .consistentIdentification:
@@ -1452,24 +1904,3 @@ private struct FigmaDemoBox<Content: View>: View {
     }
 }
 
-// MARK: - FigmaCodeBox
-
-private struct FigmaCodeBox: View {
-    let label: String
-    let code: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-            Text(label)
-                .font(DesignTokens.Font.bodySmallBold)
-                .foregroundStyle(DesignTokens.Color.textPrimary)
-            Text(code)
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundStyle(DesignTokens.Color.textSecondary)
-        }
-        .padding(DesignTokens.Spacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DesignTokens.Color.background)
-        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
-    }
-}
