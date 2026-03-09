@@ -1,13 +1,13 @@
 ---
 name: figma-a11y-review
-description: FigmaのデザインURLを受け取り、docs/ui-design-review/ui-design-accessibility-check-list.csvのチェックリストに基づいてアクセシビリティレビューを行い、画面ごとのレポートファイルを出力する。ユーザーがFigma URLを渡してアクセシビリティチェックを依頼したときに使用する。
+description: FigmaのデザインURLを受け取り、.claude/skills/figma-a11y-review/references/ui-design-accessibility-check-list.mdのチェックリストに基づいてアクセシビリティレビューを行い、画面ごとのレポートファイルを出力する。ユーザーがFigma URLを渡してアクセシビリティチェックを依頼したときに使用する。
 ---
 
 # Figma アクセシビリティレビュースキル
 
 ## 概要
 
-FigmaデザインをチェックリストCSVに基づいてレビューし、Markdownレポートを自動生成する。
+Figmaデザインをチェックリストに基づいてレビューし、Markdownレポートを自動生成する。
 
 ---
 
@@ -24,7 +24,7 @@ FigmaデザインをチェックリストCSVに基づいてレビューし、Mar
 
 ### Step 2: チェックリストの読み込み
 
-`docs/ui-design-review/ui-design-accessibility-check-list.csv` を Read ツールで読み込む。
+`.claude/skills/figma-a11y-review/references/ui-design-accessibility-check-list.md` を Read ツールで読み込む。
 
 CSVの列構成: `ID, チェック内容, 重篤度`
 
@@ -101,7 +101,7 @@ report/figma-a11y-review/{画面名}/{レビューした日付}.md
 ```
 
 - **画面名**: Figmaのデザインから判断したスネークケースの画面名（例: `task-list`, `task-detail`, `wcag-demo`）
-- **日付**: レビュー実施日時を `YYYY-MM-DD-HH-mm` 形式で使用（例: `2026-03-10-14-30.md`）
+- **日付**: レビュー実施日時を日本時間で `YYYY-MM-DD-HH-mm` 形式で使用（例: `2026-03-10-14-30.md`）
 - ディレクトリが存在しない場合は自動作成する
 
 #### レポートフォーマット
@@ -111,8 +111,8 @@ report/figma-a11y-review/{画面名}/{レビューした日付}.md
 
 **対象デザイン**: {画面名}
 **Figma URL**: {URL}
-**チェックリスト**: `docs/ui-design-review/ui-design-accessibility-check-list.csv`
-**レビュー日**: {今日の日付}
+**チェックリスト**: `.claude/skills/figma-a11y-review/references/ui-design-accessibility-check-list.md`
+**レビュー日時**: {日本時間で `YYYY-MM-DD-HH-mm`）}
 
 ---
 
